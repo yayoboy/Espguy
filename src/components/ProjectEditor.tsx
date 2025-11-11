@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Project } from '@/store/useProjectStore'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Save, Play, Upload, FileCode, Cpu, Code, Zap } from 'lucide-react'
+import { Save, Play, Upload, FileCode, Cpu, Code, Zap, GitBranch } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import ComponentLibrary from './ComponentLibrary'
 import YamlEditor from './YamlEditor'
@@ -10,6 +10,8 @@ import BuildConsole from './BuildConsole'
 import PinMapper from './PinMapper'
 import LambdaEditor from './LambdaEditor'
 import AutomationBuilder from './AutomationBuilder'
+import NodeEditor, { FlowData } from './NodeEditor'
+import ScriptBuilder, { ScriptData } from './ScriptBuilder'
 import { ESPHomeService } from '@/services/esphome'
 import { useEditorStore } from '@/store/useEditorStore'
 
@@ -23,6 +25,8 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
   const [buildProcess, setBuildProcess] = useState<string | null>(null)
   const [showLambdaEditor, setShowLambdaEditor] = useState(false)
   const [showAutomationBuilder, setShowAutomationBuilder] = useState(false)
+  const [showNodeEditor, setShowNodeEditor] = useState(false)
+  const [showScriptBuilder, setShowScriptBuilder] = useState(false)
   const { components, yaml, setYaml, setComponents, addComponent } = useEditorStore()
   const { toast } = useToast()
 
@@ -191,6 +195,14 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
             <Zap className="mr-2 h-4 w-4" />
             Automation
           </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowNodeEditor(true)}>
+            <GitBranch className="mr-2 h-4 w-4" />
+            Node Flow
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowScriptBuilder(true)}>
+            <FileCode className="mr-2 h-4 w-4" />
+            Script
+          </Button>
           <Button variant="outline" onClick={handleSave}>
             <Save className="mr-2 h-4 w-4" />
             Save
@@ -280,6 +292,55 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
           toast({
             title: 'Automation Added',
             description: `Automation "${automation.name}" added to configuration`,
+          })
+        }}
+      />
+
+      {/* Node Editor Dialog */}
+      <NodeEditor
+        open={showNodeEditor}
+        onClose={() => setShowNodeEditor(false)}
+        onSave={(flow: FlowData) => {
+          const component = {
+            id: `flow-${Date.now()}`,
+            type: 'lambda',
+            name: flow.name,
+            platform: 'lambda',
+            config: {
+              lambda: `// Generated from flow: ${flow.name}\n// Nodes: ${flow.nodes.length}\n// TODO: Implement flow logic`,
+              flow_data: flow,
+            },
+          }
+          addComponent(component)
+          toast({
+            title: 'Flow Added',
+            description: `Node flow "${flow.name}" added to configuration`,
+          })
+        }}
+      />
+
+      {/* Script Builder Dialog */}
+      <ScriptBuilder
+        open={showScriptBuilder}
+        onClose={() => setShowScriptBuilder(false)}
+        onSave={(script: ScriptData) => {
+          const component = {
+            id: `script-${Date.now()}`,
+            type: 'script',
+            name: script.name,
+            platform: 'script',
+            config: {
+              id: script.name.toLowerCase().replace(/\s+/g, '_'),
+              mode: script.mode,
+              then: script.sequence.map((action) => ({
+                [action.action]: action.config,
+              })),
+            },
+          }
+          addComponent(component)
+          toast({
+            title: 'Script Added',
+            description: `Script "${script.name}" added to configuration`,
           })
         }}
       />

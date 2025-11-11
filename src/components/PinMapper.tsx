@@ -9,6 +9,7 @@ import { Search, AlertTriangle, Check, Zap, Cpu } from 'lucide-react'
 import { getPinout, checkPinConflicts, BoardPin } from '@/services/pinout'
 import { useEditorStore } from '@/store/useEditorStore'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import BoardDiagram from './BoardDiagram'
 
 interface PinMapperProps {
   board: string
@@ -299,47 +300,63 @@ export default function PinMapper({ board, onPinSelect }: PinMapperProps) {
         {/* Board Diagram */}
         <TabsContent value="diagram" className="mt-0">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="rounded-lg border-2 border-dashed p-8 text-center">
-                  <Cpu className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-                  <h3 className="mb-2 font-semibold">{pinout.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Visual board diagram coming soon
-                  </p>
-                  <div className="space-y-2 text-left">
-                    {pinout.notes?.map((note, idx) => (
-                      <p key={idx} className="text-xs text-muted-foreground flex items-start gap-2">
-                        <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
-                        {note}
-                      </p>
-                    ))}
-                  </div>
-                </div>
+            <CardContent className="p-0">
+              <BoardDiagram
+                board={board}
+                usedPins={usedPins.map(u => u.pin)}
+                onPinClick={(pin) => {
+                  setSelectedPin(pin)
+                  onPinSelect?.(pin.pin)
+                }}
+              />
+            </CardContent>
+          </Card>
 
-                {/* Legend */}
-                <div className="w-full rounded-lg border p-4">
-                  <h4 className="mb-3 font-semibold text-sm">Pin Function Legend</h4>
-                  <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                    {[
-                      { type: 'digital', label: 'Digital I/O' },
-                      { type: 'analog', label: 'Analog' },
-                      { type: 'pwm', label: 'PWM' },
-                      { type: 'i2c', label: 'I2C' },
-                      { type: 'spi', label: 'SPI' },
-                      { type: 'uart', label: 'UART' },
-                      { type: 'special', label: 'Special' },
-                    ].map(({ type, label }) => (
-                      <div key={type} className="flex items-center gap-2">
-                        <div className={`h-3 w-3 rounded ${getFunctionColor(type)}`} />
-                        <span className="text-xs">{label}</span>
-                      </div>
-                    ))}
+          {/* Legend */}
+          <Card className="mt-4">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">Pin Function Legend</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {[
+                  { type: 'digital', label: 'Digital I/O' },
+                  { type: 'analog', label: 'Analog' },
+                  { type: 'pwm', label: 'PWM' },
+                  { type: 'i2c', label: 'I2C' },
+                  { type: 'spi', label: 'SPI' },
+                  { type: 'uart', label: 'UART' },
+                  { type: 'special', label: 'Special' },
+                ].map(({ type, label }) => (
+                  <div key={type} className="flex items-center gap-2">
+                    <div className={`h-3 w-3 rounded ${getFunctionColor(type)}`} />
+                    <span className="text-xs">{label}</span>
                   </div>
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>
+
+          {/* Board Notes */}
+          {pinout.notes && pinout.notes.length > 0 && (
+            <Card className="mt-4 border-yellow-500/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm">
+                  <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                  Board Notes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {pinout.notes.map((note, idx) => (
+                    <p key={idx} className="text-xs text-muted-foreground flex items-start gap-2">
+                      • {note}
+                    </p>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
 

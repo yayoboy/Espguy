@@ -9,12 +9,14 @@ import {
   Moon,
   Sun,
   Cpu,
+  Command as CommandIcon,
 } from 'lucide-react'
 import { useProjectStore } from '@/store/useProjectStore'
 import { useThemeStore } from '@/store/useThemeStore'
 import ProjectList from './ProjectList'
 import ProjectEditor from './ProjectEditor'
 import { NewProjectDialog } from './NewProjectDialog'
+import CommandPalette from './CommandPalette'
 import { useToast } from '@/components/ui/use-toast'
 
 export default function Dashboard() {
@@ -59,6 +61,27 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => {
+              // Trigger command palette
+              const event = new KeyboardEvent('keydown', {
+                key: 'k',
+                ctrlKey: true,
+                bubbles: true,
+              })
+              document.dispatchEvent(event)
+            }}
+          >
+            <CommandIcon className="h-4 w-4" />
+            <span className="hidden md:inline">Command</span>
+            <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
+
           <Button
             variant="ghost"
             size="icon"
@@ -176,6 +199,25 @@ export default function Dashboard() {
         onProjectCreated={() => {
           loadProjects()
           setShowNewProject(false)
+        }}
+      />
+
+      <CommandPalette
+        onNewProject={() => setShowNewProject(true)}
+        onSwitchToEditor={() => setActiveTab('editor')}
+        onOpenNodeEditor={() => {
+          // Node Editor is opened from ProjectEditor
+          toast({
+            title: 'Node Editor',
+            description: 'Open a project first, then use the Node Flow button',
+          })
+        }}
+        onOpenScriptBuilder={() => {
+          // Script Builder is opened from ProjectEditor
+          toast({
+            title: 'Script Builder',
+            description: 'Open a project first, then use the Script button',
+          })
         }}
       />
     </div>
