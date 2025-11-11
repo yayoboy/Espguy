@@ -17,19 +17,22 @@ A modern, feature-rich desktop application for creating, managing, and flashing 
 - **Build Console** - Real-time compilation output with syntax highlighting
 
 ### Advanced Features
-- **Rich Component Library** - 35+ pre-configured templates for sensors, switches, lights, and more
-  - **Sensors**: DHT22, BME280, DS18B20, Ultrasonic, ADC, BH1750, Pulse Counter, Rotary Encoder
-  - **Binary Sensors**: PIR Motion, Door/Window
-  - **Switches**: Relay, GPIO
-  - **Lights**: RGB, FastLED (WS2812)
-  - **Outputs**: GPIO, PWM
-  - **Fan**: Binary, Speed control
-  - **Number, Select, Button**: Template controls
-  - **Display**: SSD1306 OLED
-  - **Time**: SNTP synchronization
-  - **Text Sensors**: WiFi info, Version
-  - **Climate, Cover**: Advanced controls
-  - **Advanced**: Lambda, Script, Automation
+- **🚀 Comprehensive Component Library** - 100+ pre-configured templates across 25+ categories
+  - **Environmental Sensors**: DHT11/22, AM2320, SHT3xD, BME280, BMP280/180
+  - **Light Sensors**: BH1750, TSL2561, MAX44009, Photoresistor
+  - **Air Quality**: MH-Z19 (CO2), SDS011, PMS5003/7003, CCS811 (VOC)
+  - **Motion & Proximity**: PIR, RCWL-0516, LD2410 mmWave, VL53L0X ToF
+  - **Energy Monitoring**: CSE7766, HLW8012, PZEM-004T, INA219
+  - **Advanced Lights**: NeoPixelBus, RGB/RGBW/RGBWW, Monochromatic, Binary
+  - **Climate**: Bang-Bang, PID Thermostat, Midea AC, Daikin
+  - **Displays**: SSD1306, SSD1325, LCD PCF8574, MAX7219 Matrix
+  - **Binary Sensors**: Touch (TTP229, MPR121, ESP32), GPIO, Template
+  - **Switches**: GPIO, UART, Template, System (Restart/Shutdown)
+  - **Covers**: Time-based, Endstop
+  - **Communication**: I2C, SPI, UART, CAN Bus, Modbus
+  - **Media**: DFPlayer MP3, I2S Audio, RTTTL Buzzer
+  - **System Sensors**: Uptime, WiFi Signal, Template
+  - **And many more...**
 
 - **🆕 Pin Mapper** - Interactive pin reference guide
   - Visual pin layout for ESP32/ESP8266 boards

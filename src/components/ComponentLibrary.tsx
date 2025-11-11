@@ -11,6 +11,8 @@ import {
   COMPONENT_TEMPLATES,
   getAllCategories,
   getTemplatesByCategory,
+  getComponentCount,
+  getCategoryCount,
 } from '@/services/templates'
 import { ComponentConfigDialog } from './ComponentConfigDialog'
 
@@ -68,7 +70,12 @@ export default function ComponentLibrary({ project }: ComponentLibraryProps) {
       {/* Component Library Sidebar */}
       <div className="w-96 border-r bg-muted/30">
         <div className="p-4">
-          <h3 className="mb-4 text-lg font-semibold">Component Library</h3>
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">Component Library</h3>
+            <p className="text-xs text-muted-foreground">
+              {getComponentCount()} components across {getCategoryCount()} categories
+            </p>
+          </div>
 
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

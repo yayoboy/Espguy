@@ -9,7 +9,11 @@ export interface ComponentTemplate {
   requiredFields?: string[]
 }
 
-export const COMPONENT_TEMPLATES: ComponentTemplate[] = [
+// Import extended components
+import { getAllESPHomeComponents } from './extended-templates'
+
+// Base component templates - most commonly used
+const BASE_COMPONENT_TEMPLATES: ComponentTemplate[] = [
   // Sensors
   {
     id: 'dht22',
@@ -477,6 +481,12 @@ export const COMPONENT_TEMPLATES: ComponentTemplate[] = [
   },
 ]
 
+// Combine all templates
+export const COMPONENT_TEMPLATES: ComponentTemplate[] = [
+  ...BASE_COMPONENT_TEMPLATES,
+  ...getAllESPHomeComponents(),
+]
+
 export function getTemplatesByCategory(category: string): ComponentTemplate[] {
   return COMPONENT_TEMPLATES.filter((t) => t.category === category)
 }
@@ -487,4 +497,12 @@ export function getTemplateById(id: string): ComponentTemplate | undefined {
 
 export function getAllCategories(): string[] {
   return [...new Set(COMPONENT_TEMPLATES.map((t) => t.category))]
+}
+
+export function getComponentCount(): number {
+  return COMPONENT_TEMPLATES.length
+}
+
+export function getCategoryCount(): number {
+  return getAllCategories().length
 }
