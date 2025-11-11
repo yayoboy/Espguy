@@ -219,6 +219,13 @@ export default function Dashboard() {
             description: 'Open a project first, then use the Script button',
           })
         }}
+        onOpenDeviceMonitor={() => {
+          // Device Monitor is opened from ProjectEditor
+          toast({
+            title: 'Device Monitor',
+            description: 'Open a project first, then use the Monitor button',
+          })
+        }}
       />
     </div>
   )

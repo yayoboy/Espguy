@@ -42,6 +42,7 @@ interface CommandPaletteProps {
   onOpenAutomationBuilder?: () => void
   onOpenNodeEditor?: () => void
   onOpenScriptBuilder?: () => void
+  onOpenDeviceMonitor?: () => void
   onSave?: () => void
   onCompile?: () => void
   onUpload?: () => void
@@ -57,6 +58,7 @@ export default function CommandPalette({
   onOpenAutomationBuilder,
   onOpenNodeEditor,
   onOpenScriptBuilder,
+  onOpenDeviceMonitor,
   onSave,
   onCompile,
   onUpload,
@@ -210,6 +212,12 @@ export default function CommandPalette({
               >
                 <FileCode className="mr-2 h-4 w-4" />
                 <span>Script Builder</span>
+              </CommandItem>
+              <CommandItem
+                onSelect={() => runCommand(() => onOpenDeviceMonitor?.())}
+              >
+                <Activity className="mr-2 h-4 w-4" />
+                <span>Device Monitor</span>
               </CommandItem>
               <CommandItem
                 onSelect={() => runCommand(() => onOpenPinMapper?.())}

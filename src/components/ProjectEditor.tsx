@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Project } from '@/store/useProjectStore'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Save, Play, Upload, FileCode, Cpu, Code, Zap, GitBranch } from 'lucide-react'
+import { Save, Play, Upload, FileCode, Cpu, Code, Zap, GitBranch, Activity } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import ComponentLibrary from './ComponentLibrary'
 import YamlEditor from './YamlEditor'
@@ -12,6 +12,7 @@ import LambdaEditor from './LambdaEditor'
 import AutomationBuilder from './AutomationBuilder'
 import NodeEditor, { FlowData } from './NodeEditor'
 import ScriptBuilder, { ScriptData } from './ScriptBuilder'
+import DeviceMonitor from './DeviceMonitor'
 import { ESPHomeService } from '@/services/esphome'
 import { useEditorStore } from '@/store/useEditorStore'
 
@@ -27,6 +28,7 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
   const [showAutomationBuilder, setShowAutomationBuilder] = useState(false)
   const [showNodeEditor, setShowNodeEditor] = useState(false)
   const [showScriptBuilder, setShowScriptBuilder] = useState(false)
+  const [showDeviceMonitor, setShowDeviceMonitor] = useState(false)
   const { components, yaml, setYaml, setComponents, addComponent } = useEditorStore()
   const { toast } = useToast()
 
@@ -203,6 +205,10 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
             <FileCode className="mr-2 h-4 w-4" />
             Script
           </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowDeviceMonitor(true)}>
+            <Activity className="mr-2 h-4 w-4" />
+            Monitor
+          </Button>
           <Button variant="outline" onClick={handleSave}>
             <Save className="mr-2 h-4 w-4" />
             Save
@@ -343,6 +349,12 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
             description: `Script "${script.name}" added to configuration`,
           })
         }}
+      />
+
+      {/* Device Monitor Dialog */}
+      <DeviceMonitor
+        open={showDeviceMonitor}
+        onClose={() => setShowDeviceMonitor(false)}
       />
 
       {/* Build Console */}
