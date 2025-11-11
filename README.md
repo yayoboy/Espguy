@@ -17,14 +17,41 @@ A modern, feature-rich desktop application for creating, managing, and flashing 
 - **Build Console** - Real-time compilation output with syntax highlighting
 
 ### Advanced Features
-- **Rich Component Library** - Pre-configured templates for sensors, switches, lights, and more
-  - Temperature & Humidity sensors (DHT22, BME280)
-  - Distance sensors (Ultrasonic)
-  - Motion & Door sensors
-  - Relay switches
-  - RGB lights & LED strips
-  - Climate controls
-  - And many more...
+- **Rich Component Library** - 35+ pre-configured templates for sensors, switches, lights, and more
+  - **Sensors**: DHT22, BME280, DS18B20, Ultrasonic, ADC, BH1750, Pulse Counter, Rotary Encoder
+  - **Binary Sensors**: PIR Motion, Door/Window
+  - **Switches**: Relay, GPIO
+  - **Lights**: RGB, FastLED (WS2812)
+  - **Outputs**: GPIO, PWM
+  - **Fan**: Binary, Speed control
+  - **Number, Select, Button**: Template controls
+  - **Display**: SSD1306 OLED
+  - **Time**: SNTP synchronization
+  - **Text Sensors**: WiFi info, Version
+  - **Climate, Cover**: Advanced controls
+  - **Advanced**: Lambda, Script, Automation
+
+- **🆕 Pin Mapper** - Interactive pin reference guide
+  - Visual pin layout for ESP32/ESP8266 boards
+  - Real-time pin conflict detection
+  - Function capability indicators (I2C, SPI, ADC, PWM, etc.)
+  - Boot state warnings and notes
+  - Search and filter pins
+  - Grid, List, and Diagram views
+
+- **🆕 Lambda Editor** - Visual C++ lambda builder
+  - Template library for common use cases
+  - Syntax highlighting and code completion hints
+  - Variable tracking and type indicators
+  - Control flow, math, sensor filtering templates
+  - Time-based logic builder
+
+- **🆕 Automation Builder** - Visual automation creator
+  - Drag-and-drop trigger configuration
+  - Multiple condition support (AND/OR logic)
+  - Sequential action builder
+  - Pre-built templates (motion lights, temperature control, etc.)
+  - Real-time validation
 
 - **Modern UI/UX**
   - Dark mode support with system preference detection

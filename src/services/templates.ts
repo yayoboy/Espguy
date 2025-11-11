@@ -199,6 +199,282 @@ export const COMPONENT_TEMPLATES: ComponentTemplate[] = [
       stop_action: [],
     },
   },
+
+  // More Sensors
+  {
+    id: 'adc',
+    name: 'Analog to Digital Converter',
+    category: 'Sensors',
+    platform: 'sensor',
+    description: 'Read analog voltage from ADC pin',
+    icon: 'Activity',
+    config: {
+      platform: 'adc',
+      pin: 'A0',
+      name: 'ADC Sensor',
+      update_interval: '60s',
+    },
+    requiredFields: ['pin'],
+  },
+  {
+    id: 'bh1750',
+    name: 'BH1750 Light Sensor',
+    category: 'Sensors',
+    platform: 'sensor',
+    description: 'I2C light intensity sensor',
+    icon: 'Sun',
+    config: {
+      platform: 'bh1750',
+      name: 'Illuminance',
+      address: '0x23',
+      update_interval: '60s',
+    },
+  },
+  {
+    id: 'pulse_counter',
+    name: 'Pulse Counter',
+    category: 'Sensors',
+    platform: 'sensor',
+    description: 'Count pulses (water/energy meters)',
+    icon: 'Activity',
+    config: {
+      platform: 'pulse_counter',
+      pin: 'D5',
+      name: 'Pulse Counter',
+      unit_of_measurement: 'pulses/min',
+      update_interval: '60s',
+    },
+    requiredFields: ['pin'],
+  },
+  {
+    id: 'rotary_encoder',
+    name: 'Rotary Encoder',
+    category: 'Sensors',
+    platform: 'sensor',
+    description: 'Rotary encoder position sensor',
+    icon: 'RotateCw',
+    config: {
+      platform: 'rotary_encoder',
+      name: 'Rotary Encoder',
+      pin_a: 'D1',
+      pin_b: 'D2',
+    },
+    requiredFields: ['pin_a', 'pin_b'],
+  },
+
+  // Text Sensors
+  {
+    id: 'wifi_info',
+    name: 'WiFi Info',
+    category: 'Text Sensors',
+    platform: 'text_sensor',
+    description: 'WiFi connection information',
+    icon: 'Wifi',
+    config: {
+      platform: 'wifi_info',
+      ip_address: {
+        name: 'IP Address',
+      },
+      ssid: {
+        name: 'SSID',
+      },
+    },
+  },
+  {
+    id: 'version',
+    name: 'ESPHome Version',
+    category: 'Text Sensors',
+    platform: 'text_sensor',
+    description: 'Current ESPHome version',
+    icon: 'Info',
+    config: {
+      platform: 'version',
+      name: 'ESPHome Version',
+    },
+  },
+
+  // Output
+  {
+    id: 'gpio_output',
+    name: 'GPIO Output',
+    category: 'Output',
+    platform: 'output',
+    description: 'Basic GPIO output',
+    icon: 'Zap',
+    config: {
+      platform: 'gpio',
+      pin: 'D1',
+      id: 'gpio_output_1',
+    },
+    requiredFields: ['pin'],
+  },
+  {
+    id: 'pwm_output',
+    name: 'PWM Output',
+    category: 'Output',
+    platform: 'output',
+    description: 'PWM output for dimmers',
+    icon: 'Zap',
+    config: {
+      platform: 'esp8266_pwm',
+      pin: 'D1',
+      frequency: '1000 Hz',
+      id: 'pwm_output_1',
+    },
+    requiredFields: ['pin'],
+  },
+
+  // Fan
+  {
+    id: 'binary_fan',
+    name: 'Binary Fan',
+    category: 'Fan',
+    platform: 'fan',
+    description: 'On/off fan control',
+    icon: 'Fan',
+    config: {
+      platform: 'binary',
+      output: 'fan_output',
+      name: 'Fan',
+    },
+  },
+  {
+    id: 'speed_fan',
+    name: 'Speed Fan',
+    category: 'Fan',
+    platform: 'fan',
+    description: 'Variable speed fan',
+    icon: 'Fan',
+    config: {
+      platform: 'speed',
+      output: 'fan_output',
+      name: 'Fan',
+      speed_count: 3,
+    },
+  },
+
+  // Advanced - Lambda
+  {
+    id: 'lambda',
+    name: 'Lambda Function',
+    category: 'Advanced',
+    platform: 'lambda',
+    description: 'Custom C++ lambda expression',
+    icon: 'Code',
+    config: {
+      lambda: '// Custom C++ code here\nreturn 0;',
+    },
+  },
+
+  // Advanced - Script
+  {
+    id: 'script',
+    name: 'Script',
+    category: 'Advanced',
+    platform: 'script',
+    description: 'Reusable action sequence',
+    icon: 'FileCode',
+    config: {
+      id: 'my_script',
+      mode: 'single',
+      then: [],
+    },
+  },
+
+  // Advanced - Automation
+  {
+    id: 'automation',
+    name: 'Automation',
+    category: 'Advanced',
+    platform: 'automation',
+    description: 'Trigger-based automation',
+    icon: 'Zap',
+    config: {
+      trigger: [],
+      condition: [],
+      then: [],
+    },
+  },
+
+  // Number
+  {
+    id: 'template_number',
+    name: 'Template Number',
+    category: 'Number',
+    platform: 'number',
+    description: 'Number input control',
+    icon: 'Hash',
+    config: {
+      platform: 'template',
+      name: 'Number',
+      min_value: 0,
+      max_value: 100,
+      step: 1,
+      optimistic: true,
+    },
+  },
+
+  // Select
+  {
+    id: 'template_select',
+    name: 'Template Select',
+    category: 'Select',
+    platform: 'select',
+    description: 'Dropdown selection',
+    icon: 'List',
+    config: {
+      platform: 'template',
+      name: 'Select',
+      options: ['Option 1', 'Option 2', 'Option 3'],
+      optimistic: true,
+    },
+  },
+
+  // Button
+  {
+    id: 'template_button',
+    name: 'Template Button',
+    category: 'Button',
+    platform: 'button',
+    description: 'Triggerable button',
+    icon: 'Square',
+    config: {
+      platform: 'template',
+      name: 'Button',
+      on_press: [],
+    },
+  },
+
+  // Display
+  {
+    id: 'ssd1306',
+    name: 'SSD1306 OLED Display',
+    category: 'Display',
+    platform: 'display',
+    description: 'I2C OLED display',
+    icon: 'Monitor',
+    config: {
+      platform: 'ssd1306_i2c',
+      model: 'SSD1306_128X64',
+      address: '0x3C',
+      lambda: '// Display code here',
+    },
+  },
+
+  // Time
+  {
+    id: 'sntp',
+    name: 'SNTP Time',
+    category: 'Time',
+    platform: 'time',
+    description: 'Network time synchronization',
+    icon: 'Clock',
+    config: {
+      platform: 'sntp',
+      id: 'sntp_time',
+      timezone: 'Europe/Rome',
+    },
+  },
 ]
 
 export function getTemplatesByCategory(category: string): ComponentTemplate[] {

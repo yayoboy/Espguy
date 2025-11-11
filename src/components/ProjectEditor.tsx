@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react'
 import { Project } from '@/store/useProjectStore'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Save, Play, Upload, FileCode } from 'lucide-react'
+import { Save, Play, Upload, FileCode, Cpu, Code, Zap } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import ComponentLibrary from './ComponentLibrary'
 import YamlEditor from './YamlEditor'
 import BuildConsole from './BuildConsole'
+import PinMapper from './PinMapper'
+import LambdaEditor from './LambdaEditor'
+import AutomationBuilder from './AutomationBuilder'
 import { ESPHomeService } from '@/services/esphome'
 import { useEditorStore } from '@/store/useEditorStore'
 
@@ -18,7 +21,9 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
   const [activeTab, setActiveTab] = useState('components')
   const [showConsole, setShowConsole] = useState(false)
   const [buildProcess, setBuildProcess] = useState<string | null>(null)
-  const { components, yaml, setYaml, setComponents } = useEditorStore()
+  const [showLambdaEditor, setShowLambdaEditor] = useState(false)
+  const [showAutomationBuilder, setShowAutomationBuilder] = useState(false)
+  const { components, yaml, setYaml, setComponents, addComponent } = useEditorStore()
   const { toast } = useToast()
 
   useEffect(() => {
@@ -178,6 +183,14 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
         </div>
 
         <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => setShowLambdaEditor(true)}>
+            <Code className="mr-2 h-4 w-4" />
+            Lambda
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowAutomationBuilder(true)}>
+            <Zap className="mr-2 h-4 w-4" />
+            Automation
+          </Button>
           <Button variant="outline" onClick={handleSave}>
             <Save className="mr-2 h-4 w-4" />
             Save
@@ -204,7 +217,11 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
             <TabsTrigger value="components">Visual Editor</TabsTrigger>
             <TabsTrigger value="yaml">
               <FileCode className="mr-2 h-4 w-4" />
-              YAML Editor
+              YAML
+            </TabsTrigger>
+            <TabsTrigger value="pinmap">
+              <Cpu className="mr-2 h-4 w-4" />
+              Pin Mapper
             </TabsTrigger>
           </TabsList>
 
@@ -216,9 +233,56 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
             <TabsContent value="yaml" className="m-0 flex-1">
               <YamlEditor yaml={yaml} onChange={setYaml} />
             </TabsContent>
+
+            <TabsContent value="pinmap" className="m-0 flex-1">
+              <PinMapper board={project.board} />
+            </TabsContent>
           </div>
         </Tabs>
       </div>
+
+      {/* Lambda Editor Dialog */}
+      <LambdaEditor
+        open={showLambdaEditor}
+        onClose={() => setShowLambdaEditor(false)}
+        onSave={(lambda) => {
+          const component = {
+            id: `lambda-${Date.now()}`,
+            type: 'lambda',
+            name: lambda.name,
+            platform: 'lambda',
+            config: {
+              lambda: lambda.code,
+              return_type: lambda.returnType,
+            },
+          }
+          addComponent(component)
+          toast({
+            title: 'Lambda Added',
+            description: `Lambda "${lambda.name}" added to configuration`,
+          })
+        }}
+      />
+
+      {/* Automation Builder Dialog */}
+      <AutomationBuilder
+        open={showAutomationBuilder}
+        onClose={() => setShowAutomationBuilder(false)}
+        onSave={(automation) => {
+          const component = {
+            id: `automation-${Date.now()}`,
+            type: 'automation',
+            name: automation.name,
+            platform: 'automation',
+            config: automation,
+          }
+          addComponent(component)
+          toast({
+            title: 'Automation Added',
+            description: `Automation "${automation.name}" added to configuration`,
+          })
+        }}
+      />
 
       {/* Build Console */}
       {showConsole && (
