@@ -1,8 +1,14 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import path from 'path'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 import { spawn, ChildProcess } from 'child_process'
 import fs from 'fs/promises'
 import { existsSync } from 'fs'
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 let mainWindow: BrowserWindow | null = null
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
@@ -17,7 +23,7 @@ function createWindow() {
     minWidth: 1000,
     minHeight: 700,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
       nodeIntegration: false,
     },
@@ -338,7 +344,6 @@ ipcMain.handle('device:discover', async () => {
   try {
     return new Promise((resolve) => {
       const process = spawn('esphome', ['dashboard'])
-      let output = ''
 
       setTimeout(() => {
         process.kill()

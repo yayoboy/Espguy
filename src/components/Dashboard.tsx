@@ -99,6 +99,12 @@ export default function Dashboard() {
             variant="ghost"
             size="icon"
             title="Settings"
+            onClick={() => {
+              toast({
+                title: 'Settings',
+                description: 'Settings panel coming soon!',
+              })
+            }}
           >
             <Settings className="h-5 w-5" />
           </Button>

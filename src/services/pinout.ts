@@ -1476,8 +1476,23 @@ export const ESP8266_PINOUTS: Record<string, BoardPinout> = {
   },
 }
 
-export function getPinout(board: string): BoardPinout | undefined {
-  return ESP32_PINOUTS[board] || ESP8266_PINOUTS[board]
+export function getPinout(board: string, platform?: string): BoardPinout | undefined {
+  // Try to find the exact board first
+  const exactMatch = ESP32_PINOUTS[board] || ESP8266_PINOUTS[board]
+  if (exactMatch) return exactMatch
+
+  // If no exact match but platform is provided, return a default board for that platform
+  if (platform) {
+    if (platform.toUpperCase().includes('ESP32')) {
+      console.warn(`Board '${board}' not found, using default ESP32 board`)
+      return ESP32_PINOUTS['esp32dev']
+    } else if (platform.toUpperCase().includes('ESP8266')) {
+      console.warn(`Board '${board}' not found, using default ESP8266 board`)
+      return ESP8266_PINOUTS['nodemcuv2']
+    }
+  }
+
+  return undefined
 }
 
 export function getAllBoards(): Array<{ id: string; name: string; platform: string }> {

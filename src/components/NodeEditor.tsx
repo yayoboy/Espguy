@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -22,13 +22,10 @@ import {
   Calculator,
   Clock,
   ToggleLeft,
-  Plus,
   Save,
   Play,
   Download,
-  Upload,
   Trash2,
-  Copy,
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -102,9 +99,6 @@ export default function NodeEditor({ open, onClose, onSave }: NodeEditorProps) {
   const [nodes, setNodes] = useState<FlowNode[]>([])
   const [connections, setConnections] = useState<FlowConnection[]>([])
   const [selectedNode, setSelectedNode] = useState<FlowNode | null>(null)
-  const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const { toast } = useToast()
 
   const addNode = useCallback((type: keyof typeof NODE_TYPES, nodeType: string) => {
@@ -118,8 +112,8 @@ export default function NodeEditor({ open, onClose, onSave }: NodeEditorProps) {
       label: nodeTypeDef.label,
       config: {},
       position: { x: 100, y: 100 },
-      inputs: nodeTypeDef.inputs || [],
-      outputs: nodeTypeDef.outputs || [],
+      inputs: 'inputs' in nodeTypeDef ? nodeTypeDef.inputs : [],
+      outputs: 'outputs' in nodeTypeDef ? nodeTypeDef.outputs : [],
     }
 
     setNodes(prev => [...prev, newNode])
@@ -150,22 +144,6 @@ export default function NodeEditor({ open, onClose, onSave }: NodeEditorProps) {
       n.id === nodeId ? { ...n, config: { ...n.config, ...config } } : n
     ))
   }, [])
-
-  const generateCode = useCallback(() => {
-    if (nodes.length === 0) {
-      return '# Empty flow'
-    }
-
-    let code = `# Generated from flow: ${flowName}\n`
-    code += `# ${flowDescription}\n\n`
-
-    // Generate lambda code based on node connections
-    code += '# Lambda logic\n'
-    code += 'lambda: |-\n'
-    code += '  // Flow logic here\n'
-
-    return code
-  }, [nodes, flowName, flowDescription])
 
   const handleSave = useCallback(() => {
     if (!flowName.trim()) {
@@ -565,7 +543,7 @@ function NodeComponent({
   node,
   isSelected,
   onSelect,
-  onRemove,
+  onRemove: _onRemove,
   onPositionChange,
 }: {
   node: FlowNode

@@ -73,10 +73,7 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
 
   const handleSave = async () => {
     try {
-      const result = await window.electronAPI.yaml.save({
-        projectId: project.id,
-        yaml,
-      })
+      const result = await window.electronAPI.yaml.save(project.id, yaml)
 
       if (result.success) {
         toast({
@@ -253,7 +250,7 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
             </TabsContent>
 
             <TabsContent value="pinmap" className="m-0 flex-1">
-              <PinMapper board={project.board} />
+              <PinMapper board={project.board} platform={project.platform} />
             </TabsContent>
           </div>
         </Tabs>

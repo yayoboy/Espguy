@@ -13,15 +13,21 @@ import BoardDiagram from './BoardDiagram'
 
 interface PinMapperProps {
   board: string
+  platform?: string
   onPinSelect?: (pin: string) => void
 }
 
-export default function PinMapper({ board, onPinSelect }: PinMapperProps) {
+export default function PinMapper({ board, platform, onPinSelect }: PinMapperProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedPin, setSelectedPin] = useState<BoardPin | null>(null)
   const { components } = useEditorStore()
 
-  const pinout = useMemo(() => getPinout(board), [board])
+  const pinout = useMemo(() => {
+    console.log('PinMapper: board =', board, ', platform =', platform)
+    const result = getPinout(board, platform)
+    console.log('PinMapper: pinout =', result)
+    return result
+  }, [board, platform])
 
   // Extract used pins from components
   const usedPins = useMemo(() => {

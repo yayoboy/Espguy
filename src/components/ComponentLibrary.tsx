@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus, Search, Trash2, Settings } from 'lucide-react'
 import {
   COMPONENT_TEMPLATES,
@@ -20,7 +20,7 @@ interface ComponentLibraryProps {
   project: Project
 }
 
-export default function ComponentLibrary({ project }: ComponentLibraryProps) {
+export default function ComponentLibrary({ project: _project }: ComponentLibraryProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [configDialog, setConfigDialog] = useState<{

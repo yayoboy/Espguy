@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FileCode, Plus, Trash2, GripVertical, Play, Clock, Sparkles } from 'lucide-react'
+import { FileCode, Plus, Trash2, GripVertical, Play, Sparkles } from 'lucide-react'
 import { SCRIPT_TEMPLATES, AUTOMATION_ACTIONS } from '@/services/advanced-templates'
 import { useToast } from '@/components/ui/use-toast'
 
