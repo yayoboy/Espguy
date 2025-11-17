@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
   LayoutDashboard,
   FolderOpen,
@@ -57,10 +58,15 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between border-b px-4 py-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between border-b px-4 py-3 bg-gradient-to-r from-background to-muted/20">
+        <div className="flex items-center gap-3">
           <Cpu className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold">ESPHome GUI</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold">ESPHome GUI</h1>
+            <Badge variant="outline" className="text-xs">
+              v1.0.0
+            </Badge>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -96,22 +102,29 @@ export default function Dashboard() {
           </Button>
 
           <Button
-            variant="ghost"
-            size="icon"
+            variant="outline"
+            size="sm"
             onClick={toggleTheme}
-            title="Toggle theme"
+            className="gap-2"
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           >
             {theme === 'dark' ? (
-              <Sun className="h-5 w-5" />
+              <>
+                <Sun className="h-4 w-4" />
+                <span className="hidden md:inline">Light</span>
+              </>
             ) : (
-              <Moon className="h-5 w-5" />
+              <>
+                <Moon className="h-4 w-4" />
+                <span className="hidden md:inline">Dark</span>
+              </>
             )}
           </Button>
 
           <Button
-            variant="ghost"
-            size="icon"
-            title="Settings"
+            variant="outline"
+            size="sm"
+            title="Application Settings"
             onClick={() => {
               toast({
                 title: 'Settings',
@@ -119,7 +132,8 @@ export default function Dashboard() {
               })
             }}
           >
-            <Settings className="h-5 w-5" />
+            <Settings className="h-4 w-4" />
+            <span className="hidden md:inline">Settings</span>
           </Button>
         </div>
       </div>
