@@ -10,6 +10,7 @@ import {
   Sun,
   Cpu,
   Command as CommandIcon,
+  Download,
 } from 'lucide-react'
 import { useProjectStore } from '@/store/useProjectStore'
 import { useThemeStore } from '@/store/useThemeStore'
@@ -17,12 +18,14 @@ import ProjectList from './ProjectList'
 import ProjectEditor from './ProjectEditor'
 import { NewProjectDialog } from './NewProjectDialog'
 import CommandPalette from './CommandPalette'
+import ImportExportDialog from './ImportExportDialog'
 import { useToast } from '@/components/ui/use-toast'
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('projects')
   const [showNewProject, setShowNewProject] = useState(false)
-  const { projects, setProjects, currentProject } = useProjectStore()
+  const [showImportExport, setShowImportExport] = useState(false)
+  const { projects, setProjects, currentProject, setCurrentProject } = useProjectStore()
   const { theme, setTheme } = useThemeStore()
   const { toast } = useToast()
 
@@ -80,6 +83,16 @@ export default function Dashboard() {
             <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
               <span className="text-xs">⌘</span>K
             </kbd>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowImportExport(true)}
+            title="Import/Export Projects"
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden md:inline">Import/Export</span>
           </Button>
 
           <Button
@@ -205,6 +218,17 @@ export default function Dashboard() {
         onProjectCreated={() => {
           loadProjects()
           setShowNewProject(false)
+        }}
+      />
+
+      <ImportExportDialog
+        open={showImportExport}
+        onClose={() => setShowImportExport(false)}
+        projects={projects}
+        onImport={(project) => {
+          setCurrentProject(project)
+          setActiveTab('editor')
+          loadProjects()
         }}
       />
 
