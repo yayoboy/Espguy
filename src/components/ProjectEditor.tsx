@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Project } from '@/store/useProjectStore'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Save, Play, Upload, FileCode, Cpu, Code, Zap, GitBranch, Activity } from 'lucide-react'
+import { Save, Play, Upload, FileCode, Cpu, Code, Zap, GitBranch, Activity, History } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import ComponentLibrary from './ComponentLibrary'
 import YamlEditor from './YamlEditor'
@@ -13,8 +13,10 @@ import AutomationBuilder from './AutomationBuilder'
 import NodeEditor, { FlowData } from './NodeEditor'
 import ScriptBuilder, { ScriptData } from './ScriptBuilder'
 import DeviceMonitor from './DeviceMonitor'
+import BuildHistoryDialog from './BuildHistoryDialog'
 import { ESPHomeService } from '@/services/esphome'
 import { useEditorStore } from '@/store/useEditorStore'
+import { useBuildHistoryStore } from '@/store/useBuildHistoryStore'
 
 interface ProjectEditorProps {
   project: Project
@@ -29,7 +31,10 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
   const [showNodeEditor, setShowNodeEditor] = useState(false)
   const [showScriptBuilder, setShowScriptBuilder] = useState(false)
   const [showDeviceMonitor, setShowDeviceMonitor] = useState(false)
+  const [showBuildHistory, setShowBuildHistory] = useState(false)
+  const [currentBuildId, setCurrentBuildId] = useState<string | null>(null)
   const { components, yaml, setYaml, setComponents, addComponent } = useEditorStore()
+  const { addBuild, updateBuild } = useBuildHistoryStore()
   const { toast } = useToast()
 
   useEffect(() => {
@@ -98,9 +103,20 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
   }
 
   const handleCompile = async () => {
+    const startTime = Date.now()
+
     try {
       // Save before compiling
       await handleSave()
+
+      // Start build tracking
+      const buildId = addBuild({
+        projectId: project.id,
+        projectName: project.name,
+        type: 'compile',
+        status: 'in_progress',
+      })
+      setCurrentBuildId(buildId)
 
       setShowConsole(true)
       const result = await window.electronAPI.esphome.compile(project.id)
@@ -111,11 +127,24 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
           title: 'Build Started',
           description: 'Compiling your ESPHome configuration...',
         })
+
+        // Update build as successful
+        updateBuild(buildId, {
+          status: 'success',
+          duration: Date.now() - startTime,
+        })
       } else {
         toast({
           title: 'Error',
           description: 'Failed to start build',
           variant: 'destructive',
+        })
+
+        // Update build as failed
+        updateBuild(buildId, {
+          status: 'failed',
+          duration: Date.now() - startTime,
+          errors: ['Failed to start build process'],
         })
       }
     } catch (error) {
@@ -125,10 +154,21 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
         description: 'Failed to compile project',
         variant: 'destructive',
       })
+
+      // Update build as failed
+      if (currentBuildId) {
+        updateBuild(currentBuildId, {
+          status: 'failed',
+          duration: Date.now() - startTime,
+          errors: [error instanceof Error ? error.message : 'Unknown error'],
+        })
+      }
     }
   }
 
   const handleUpload = async () => {
+    const startTime = Date.now()
+
     try {
       // Get serial ports
       const portsResult = await window.electronAPI.serial.list()
@@ -145,6 +185,15 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
       // Save before uploading
       await handleSave()
 
+      // Start build tracking
+      const buildId = addBuild({
+        projectId: project.id,
+        projectName: project.name,
+        type: 'upload',
+        status: 'in_progress',
+      })
+      setCurrentBuildId(buildId)
+
       setShowConsole(true)
       const result = await window.electronAPI.esphome.upload(
         project.id,
@@ -157,11 +206,24 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
           title: 'Upload Started',
           description: 'Uploading firmware to device...',
         })
+
+        // Update build as successful
+        updateBuild(buildId, {
+          status: 'success',
+          duration: Date.now() - startTime,
+        })
       } else {
         toast({
           title: 'Error',
           description: 'Failed to start upload',
           variant: 'destructive',
+        })
+
+        // Update build as failed
+        updateBuild(buildId, {
+          status: 'failed',
+          duration: Date.now() - startTime,
+          errors: ['Failed to start upload process'],
         })
       }
     } catch (error) {
@@ -171,6 +233,15 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
         description: 'Failed to upload to device',
         variant: 'destructive',
       })
+
+      // Update build as failed
+      if (currentBuildId) {
+        updateBuild(currentBuildId, {
+          status: 'failed',
+          duration: Date.now() - startTime,
+          errors: [error instanceof Error ? error.message : 'Unknown error'],
+        })
+      }
     }
   }
 
@@ -205,6 +276,10 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
           <Button variant="outline" size="sm" onClick={() => setShowDeviceMonitor(true)}>
             <Activity className="mr-2 h-4 w-4" />
             Monitor
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowBuildHistory(true)}>
+            <History className="mr-2 h-4 w-4" />
+            History
           </Button>
           <Button variant="outline" onClick={handleSave}>
             <Save className="mr-2 h-4 w-4" />
@@ -352,6 +427,13 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
       <DeviceMonitor
         open={showDeviceMonitor}
         onClose={() => setShowDeviceMonitor(false)}
+      />
+
+      {/* Build History Dialog */}
+      <BuildHistoryDialog
+        open={showBuildHistory}
+        onClose={() => setShowBuildHistory(false)}
+        projectId={project.id}
       />
 
       {/* Build Console */}
