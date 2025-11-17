@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, Search, Trash2, Settings } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Plus, Search, Trash2, Settings, Info } from 'lucide-react'
 import {
   COMPONENT_TEMPLATES,
   getAllCategories,
@@ -15,6 +15,8 @@ import {
   getCategoryCount,
 } from '@/services/templates'
 import { ComponentConfigDialog } from './ComponentConfigDialog'
+import ComponentDocumentation from './ComponentDocumentation'
+import { getComponentDoc, ComponentDoc } from '@/services/component-docs'
 
 interface ComponentLibraryProps {
   project: Project
@@ -28,6 +30,10 @@ export default function ComponentLibrary({ project: _project }: ComponentLibrary
     template?: any
     component?: any
   }>({ open: false })
+  const [docDialog, setDocDialog] = useState<{
+    open: boolean
+    doc: ComponentDoc | null
+  }>({ open: false, doc: null })
 
   const { components, addComponent, deleteComponent } = useEditorStore()
   const categories = ['all', ...getAllCategories()]
@@ -45,6 +51,13 @@ export default function ComponentLibrary({ project: _project }: ComponentLibrary
 
   const handleAddComponent = (template: any) => {
     setConfigDialog({ open: true, template })
+  }
+
+  const handleShowDocs = (templateId: string) => {
+    const doc = getComponentDoc(templateId)
+    if (doc) {
+      setDocDialog({ open: true, doc })
+    }
   }
 
   const handleConfigSave = (config: any) => {
@@ -119,7 +132,22 @@ export default function ComponentLibrary({ project: _project }: ComponentLibrary
                     className="cursor-pointer transition-all hover:shadow-md"
                   >
                     <CardHeader className="p-4">
-                      <CardTitle className="text-sm">{template.name}</CardTitle>
+                      <CardTitle className="text-sm flex items-center justify-between">
+                        {template.name}
+                        {getComponentDoc(template.id) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleShowDocs(template.id)
+                            }}
+                          >
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                        )}
+                      </CardTitle>
                       <CardDescription className="text-xs">
                         {template.description}
                       </CardDescription>
@@ -220,6 +248,13 @@ export default function ComponentLibrary({ project: _project }: ComponentLibrary
           onClose={() => setConfigDialog({ open: false })}
         />
       )}
+
+      {/* Component Documentation Dialog */}
+      <ComponentDocumentation
+        doc={docDialog.doc}
+        open={docDialog.open}
+        onClose={() => setDocDialog({ open: false, doc: null })}
+      />
     </div>
   )
 }
