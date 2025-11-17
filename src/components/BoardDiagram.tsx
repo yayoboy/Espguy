@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { getPinout, BoardPin } from '@/services/pinout'
+import { getBoardDiagram } from './board-diagrams'
 
 interface BoardDiagramProps {
   board: string
@@ -22,11 +23,22 @@ export default function BoardDiagram({ board, usedPins, onPinClick }: BoardDiagr
     )
   }
 
-  const isESP32 = pinout.platform === 'ESP32'
+  // Try to get a specific diagram for this board
+  const SpecificDiagram = getBoardDiagram(board)
 
   return (
     <div className="relative w-full p-6">
-      {isESP32 ? (
+      {SpecificDiagram ? (
+        // Use specific board diagram if available
+        <SpecificDiagram
+          pins={pinout.pins}
+          usedPins={usedPins}
+          hoveredPin={hoveredPin}
+          onPinHover={setHoveredPin}
+          onPinClick={onPinClick}
+        />
+      ) : pinout.platform.includes('ESP32') ? (
+        // Fallback to generic ESP32 diagram
         <ESP32BoardDiagram
           pinout={pinout}
           usedPins={usedPins}
@@ -35,6 +47,7 @@ export default function BoardDiagram({ board, usedPins, onPinClick }: BoardDiagr
           onPinClick={onPinClick}
         />
       ) : (
+        // Fallback to generic ESP8266 diagram
         <ESP8266BoardDiagram
           pinout={pinout}
           usedPins={usedPins}
