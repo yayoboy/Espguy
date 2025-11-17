@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Project } from '@/store/useProjectStore'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Save, Play, Upload, FileCode, Cpu, Code, Zap, GitBranch, Activity, History } from 'lucide-react'
+import { Save, Play, Upload, FileCode, Cpu, Code, Zap, GitBranch, Activity, History, Wifi } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import ComponentLibrary from './ComponentLibrary'
 import YamlEditor from './YamlEditor'
@@ -14,6 +14,7 @@ import NodeEditor, { FlowData } from './NodeEditor'
 import ScriptBuilder, { ScriptData } from './ScriptBuilder'
 import DeviceMonitor from './DeviceMonitor'
 import BuildHistoryDialog from './BuildHistoryDialog'
+import OTAUpdateDialog from './OTAUpdateDialog'
 import { ESPHomeService } from '@/services/esphome'
 import { useEditorStore } from '@/store/useEditorStore'
 import { useBuildHistoryStore } from '@/store/useBuildHistoryStore'
@@ -32,6 +33,7 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
   const [showScriptBuilder, setShowScriptBuilder] = useState(false)
   const [showDeviceMonitor, setShowDeviceMonitor] = useState(false)
   const [showBuildHistory, setShowBuildHistory] = useState(false)
+  const [showOTAUpdate, setShowOTAUpdate] = useState(false)
   const [currentBuildId, setCurrentBuildId] = useState<string | null>(null)
   const { components, yaml, setYaml, setComponents, addComponent } = useEditorStore()
   const { addBuild, updateBuild } = useBuildHistoryStore()
@@ -289,9 +291,13 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
             <Play className="mr-2 h-4 w-4" />
             Compile
           </Button>
-          <Button onClick={handleUpload}>
+          <Button variant="outline" onClick={handleUpload}>
             <Upload className="mr-2 h-4 w-4" />
             Upload
+          </Button>
+          <Button onClick={() => setShowOTAUpdate(true)}>
+            <Wifi className="mr-2 h-4 w-4" />
+            OTA
           </Button>
         </div>
       </div>
@@ -434,6 +440,14 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
         open={showBuildHistory}
         onClose={() => setShowBuildHistory(false)}
         projectId={project.id}
+      />
+
+      {/* OTA Update Dialog */}
+      <OTAUpdateDialog
+        open={showOTAUpdate}
+        onClose={() => setShowOTAUpdate(false)}
+        projectId={project.id}
+        projectName={project.name}
       />
 
       {/* Build Console */}
